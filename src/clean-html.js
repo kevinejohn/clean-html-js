@@ -56,27 +56,24 @@ function cleanHtml(html, sourceUrl) {
     allowedTags,
     nonTextTags
   });
+  
+  if (!html || !sourceUrl) {
+    throw new Error("Invalid url or no html provided");
+  }
+  const readabilityUrl = createReadabilityUrl(sourceUrl);
+  const xhtml = convertHtmlToXhtml(html);
+  const document = createJsDomDocument(xhtml);
+  let cleanedHtml;
 
-  return new Promise(resolve => {
-    if (!html || !sourceUrl) {
-      throw new Error("Invalid url or no html provided");
+  try {
+    const readability = new Readability(readabilityUrl, document);
+    if (readability) {
+      cleanedHtml = readability.parse();
     }
-    const readabilityUrl = createReadabilityUrl(sourceUrl);
-    const xhtml = convertHtmlToXhtml(html);
-    const document = createJsDomDocument(xhtml);
-    let cleanedHtml;
-
-    try {
-      const readability = new Readability(readabilityUrl, document);
-      if (readability) {
-        cleanedHtml = readability.parse();
-      }
-    } catch (error) {
-      throw new Error("Unable to clean HTML");
-    }
-
-    resolve(cleanedHtml);
-  });
+  } catch (error) {
+    throw new Error("Unable to clean HTML");
+  }
+  return cleanedHtml;
 }
 
 module.exports = {
