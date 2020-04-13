@@ -19,7 +19,9 @@ var allowedTags = [
   "h4",
   "section",
   "div",
-  "span"
+  "span",
+  "image",
+  "img"
 ];
 
 module.exports = {
